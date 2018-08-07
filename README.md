@@ -6,6 +6,7 @@
 >4、缓存：Redis</br>
 >5、连接池：Druid</br>
 >6、压测：JMeter</br>
+>7、接口文档: swagger
 
 ### 技术点：
 >1、重写Jedis方法，对key值统一管理</br>
