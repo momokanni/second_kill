@@ -7,7 +7,7 @@
 >5、连接池：Druid</br>
 >6、压测：JMeter</br>
 >7、接口文档: swagger
-
+***
 ### 技术点：
 >1、重写Jedis方法，对key值统一管理</br>
 >2、响应格式统一管理。</br>
@@ -24,5 +24,5 @@
 >13、JMeter压测,结果：2核/4GB/2M带宽，2143个不同用户，QPS: 3196/s(优化前), 6210(优化后)</br>
 >14、ThreadLocal对请求秒杀对象进行统一管理
 
-
-## 秒杀涉及到的知识点真的很多！！！！
+***
+## 下一章：[springSecurity](https://github.com/momokanni/SecurityGroup)
