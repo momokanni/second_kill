@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<configuration>
+    <!-- 输出日志文件格式 -->
+    <property name="fileLayoutPattern"
+              value="%-20(%d{yyyy-MM-dd HH:mm:ss.SSS} [%level][%thread][%-4relative][%logger{10}]) [%line] %msg%n" />
+
+    <!-- 控制台打印日志格式 -->
+    <property name="consoleLayoutPattern"
+              value="%-20(%d{yyyy-MM-dd HH:mm:ss.SSS} [%logger][%thread] [%-4relative])[%level] [%line] %msg%n" />
+
+    <!--  邮件 -->
+    <!-- SMTP server的地址，必需指定。如网易的SMTP服务器地址是： smtp.163.com -->
+    <!--填入要发送邮件的smtp服务器地址-->
+    <property name="smtpHost" value="smtp.163.com"/>
+    <!-- SMTP server的端口地址。默认值：25 -->
+    <property name="smtpPort" value="25"/>
+    <!-- 发送邮件账号，默认为null -->
+    <property name="username" value="txhz2018@163.com"/>
+    <!-- 发送邮件密码，默认为null -->
+    <property name="password" value="txhl1107clf"/>
+    <!-- 如果设置为true，appender将会使用SSL连接到日志服务器。默认值：false -->
+    <property name="SSL" value="false"/>
+    <!-- 指定发送到那个邮箱，可设置多个<to>属性，指定多个目的邮箱 -->
+    <property name="email_to" value="740949744@qq.com"/><!--收件人账号多个可以逗号隔开-->
+    <!-- 指定发件人名称。如果设置成“&lt;ADMIN&gt; ”，则邮件发件人将会是“<ADMIN> ” -->
+    <property name="email_from" value="txhz2018@163.com" />
+    <!-- 指定emial的标题，它需要满足PatternLayout中的格式要求。如果设置成“Log: %logger - %msg ”，就案例来讲，则发送邮件时，标题为“【Error】: com.foo.Bar - Hello World ”。 默认值："%logger{20} - %m". -->
+    <property name="email_subject" value="[@activatedProfile@][as-server] is error" />
+
+    <!-- 日志输出格式 -->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>
+                ${consoleLayoutPattern}
+            </pattern>
+        </layout>
+    </appender>
+
+    <!-- 每天生成日志文件 info -->
+    <appender name="infoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level> Info </level>
+            <onMatch> ACCEPT </onMatch>
+            <onMismatch> DENY </onMismatch>
+        </filter>
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 正式路径：/usr/local/txhz/apps_logs/kill_file/info/info.%d{yyyy-MM-dd}.log -->
+            <fileNamePattern>/usr/local/txhz/apps_logs/kill_file/info/info.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>16</MaxHistory>
+        </rollingPolicy>
+        <!-- 输出格式 -->
+        <encoder>
+            <pattern>${fileLayoutPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- warn -->
+    <appender name="warnLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level> WARN </level>
+            <onMatch> ACCEPT </onMatch>
+            <onMismatch> DENY </onMismatch>
+        </filter>
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 正式路径： /usr/local/txhz/apps_logs/kill_file/warn/warn.%d{yyyy-MM-dd}.log -->
+            <fileNamePattern>/usr/local/txhz/apps_logs/kill_file/warn/warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>16</MaxHistory>
+        </rollingPolicy>
+        <!-- 输出格式 -->
+        <encoder>
+            <pattern>${fileLayoutPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- error -->
+    <appender name="errorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level> ERROR </level>
+        </filter>
+        <!-- 滚动策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 正式路径： /usr/local/txhz/apps_logs/kill_file/error/error.%d{yyyy-MM-dd}.log -->
+            <fileNamePattern>/usr/local/txhz/apps_logs/kill_file/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <MaxHistory>16</MaxHistory>
+        </rollingPolicy>
+        <!-- 输出格式 -->
+        <encoder>
+            <pattern>${fileLayoutPattern}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <!--smtp 服务器-->
+        <smtpHost>${smtpHost}</smtpHost>
+        <!--port-->
+        <smtpPort>${smtpPort}</smtpPort>
+        <!--发件人的邮箱-->
+        <username>${username}</username>
+        <!--发件人的邮箱密码-->
+        <password>${password}</password>
+        <SSL>${SSL}</SSL>
+        <!--是否异步-->
+        <asynchronousSending>false</asynchronousSending>
+        <!-- 发给谁的邮件列表，多个人用逗号分隔 -->
+        <to>${email_to}</to>
+        <!--发件人，添加邮箱和上面的username保持一致-->
+        <from>${username}</from>
+        <subject>${email_subject}</subject>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${fileLayoutPattern}</pattern>
+        </layout>
+        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+            <!-- 每个电子邮件只发送一个日志条目 -->
+            <bufferSize>1</bufferSize>
+        </cyclicBufferTracker>
+        <!--过滤器-->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="consoleLog" />
+        <appender-ref ref="infoLog" />
+        <appender-ref ref="errorLog" />
+        <appender-ref ref="warnLog" />
+        <appender-ref ref="EMAIL"/>
+    </root>
+
+</configuration>

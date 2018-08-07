@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>订单详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- jquery -->
+    <script type="text/javascript" src="/secondKill/js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/secondKill/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/secondKill/bootstrap/js/bootstrap.min.js"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" src="/secondKill/jquery-validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/secondKill/jquery-validation/localization/messages_zh.min.js"></script>
+    <!-- layer -->
+    <script type="text/javascript" src="/secondKill/layer/layer.js"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" src="/secondKill/js/md5.min.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/secondKill/js/common.js"></script>
+</head>
+<body>
+<div class="panel panel-default">
+  <div class="panel-heading">秒杀订单详情</div>
+  <table class="table" id="goodslist">
+        <tr>  
+        <td>商品名称</td>  
+        <td id="goodsName" colspan="3"></td>
+     </tr>  
+     <tr>  
+        <td>商品图片</td>  
+        <td colspan="2"><img id="goodsImg" width="200" height="200" /></td>
+     </tr>
+      <tr>  
+        <td>订单价格</td>  
+        <td colspan="2" id="goodsPrice"></td>
+     </tr>
+     <tr>
+     		<td>下单时间</td>  
+        	<td id="createDate" colspan="2"></td>
+     </tr>
+     <tr>
+     	<td>订单状态</td>  
+        <td >
+        	<span id="status">未支付</span>
+        </td>
+        <td>
+        	<button class="btn btn-primary btn-block" type="submit" id="payButton">立即支付</button>
+        </td>
+     </tr>
+      <tr>
+     		<td>收货人</td>  
+        	<td colspan="2">XXX  18812341234</td>  
+     </tr>
+     <tr>
+     		<td>收货地址</td>  
+        	<td colspan="2">北京市昌平区回龙观龙博一区</td>  
+     </tr>
+  </table>
+</div>
+
+</body>
+<script>
+
+    $(function () {
+        getDetail();
+    });
+    
+    function getDetail() {
+        var orderId = url_getQueryParam("orderId");
+        $.ajax({
+           url:"/secondKill/order/detail",
+           type:"GET",
+           data:{ orderId: orderId},
+           success:function (data) {
+               if (data.code == 200){
+                    rendering(data.data);
+               } else {
+                    layer.msg(data.msg);
+               }
+           },
+           error:function () {
+                layer.msg("请求异常，请重试!");
+           }
+        });
+    }
+    
+    function rendering(data) {
+        var goods = data.goodsVO;
+        var orderInfo = data.orderInfo;
+        $("#goodsName").text(goods.goodsName);
+        $("#goodsImg").attr("src","/secondKill/" + goods.goodsImg);
+        $("#goodsPrice").text(orderInfo.goodsPrice);
+        $("#createDate").text(new Date(orderInfo.createDate).format("yyyy-MM-dd hh:mm:ss"));
+        var status = "";
+        if(orderInfo.status == 1){
+            status = "已支付";
+        } else if(orderInfo.status == 2){
+            status = "已发货";
+        }else if(orderInfo.status == 3){
+            status = "已收货";
+        }else if(orderInfo.status == 4){
+            status = "已退款";
+        }else if(orderInfo.status == 5){
+            status = "已完成";
+        }else if(orderInfo.status == 0){
+            status = "未支付";
+        }
+        $("#status").text(status);
+
+    }
+
+</script>
+</html>

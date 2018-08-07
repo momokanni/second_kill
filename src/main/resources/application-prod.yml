@@ -1,0 +1,103 @@
+spring:
+  thymeleaf:
+    encoding: UTF-8
+    #cache: false
+    check-template: true
+    enabled: true
+    mode: HTML
+    prefix: classpath:/templates/
+    suffix: .html
+  mail:
+    host: smtp.163.com
+    username: txhz2018@163.com
+    password: txhl1107clf
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    druid:
+      initial-size: 5
+      max-active: 500
+      min-idle: 500
+      max-wait: 60000
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      validation-query: select 1
+      validation-query-timeout: 60000
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      filter:
+        stat:
+          log-slow-sql: true
+          db-type: mysql
+          slow-sql-millis: 2000
+      stat-view-servlet:
+        login-username: druid
+        login-password: druid
+        allow: 127.0.0.1
+        url-pattern: /druid/*
+      username: root
+      password: txhl1107mysql
+      url: jdbc:mysql://m.limit-tech.com:3306/kill?useUnicode=true&characterEncoding=UTF-8
+  rabbitmq:
+    host: 123.56.207.181
+    port: 5672
+    username: rabbitmq
+    password: txhl1107
+    virtual-host: /
+    listener:
+      simple:
+        #消费者数量
+        concurrency: 10
+        #最大消费者数量
+        max-concurrency: 10
+        #预取数量
+        prefetch: 1
+        #自动启动
+        auto-startup: true
+        #消息消费失败后，重试
+        default-requeue-rejected: true
+    template:
+      retry:
+        enabled: true
+        #重试，初始间隔
+        initial-interval: 1000ms
+        max-attempts: 3
+        #最大间隔
+        max-interval: 10000ms
+        #乘数，重复次数 * multiplier = 重试的间隔时间
+        multiplier: 1.0
+
+redis:
+  host: 123.56.207.181
+  port: 6379
+  password: txhl1107_redis_cs
+  max-active: 1000
+  #最大空闲
+  max-idle: 1000
+  max-wait: 3000
+  timeout: 3000
+
+
+
+mybatis:
+  # 数据库表相关的实体存放路径
+  type-aliases-package: com.kill.entity
+  configuration:
+    # 将下划线转换成驼峰
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 3000
+    #将mybaties语句打印出来
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #mapper-locations:
+
+server:
+  servlet:
+    context-path: /secondKill
+
+
+
+
+

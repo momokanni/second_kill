@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>商品详情</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- jquery -->
+    <script type="text/javascript" src="/secondKill/js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/secondKill/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/secondKill/bootstrap/js/bootstrap.min.js"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" src="/secondKill/jquery-validation/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="/secondKill/jquery-validation/localization/messages_zh.min.js"></script>
+    <!-- layer -->
+    <script type="text/javascript" src="/secondKill/layer/layer.js"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" src="/secondKill/js/md5.min.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/secondKill/js/common.js"></script>
+</head>
+<body>
+
+<div class="panel panel-default">
+  <div class="panel-heading">秒杀商品详情</div>
+  <table class="table" id="goodslist">
+  	<tr>  
+        <td>商品名称</td>  
+        <td colspan="3" id="goodsName"></td>
+     </tr>  
+     <tr>  
+        <td>商品图片</td>  
+        <td colspan="3"><img id="goodsImg" width="200" height="200" /></td>
+     </tr>
+     <tr>  
+        <td>秒杀开始时间</td>  
+        <td id="startDate"></td>
+        <td>
+        	<input type="hidden" id="remainSeconds"/>
+        	<span id="miaoshaTip"></span>
+        </td>
+        <td>
+        	<!--<form id="miaoshaForm" method="post" action="/secondKill/kill/do_kill">
+        		<button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>
+        		<input type="hidden" name="goodsId" th:value="${goods.id}" />
+        	</form>-->
+            <div class="row">
+                <div class="form-inline">
+                    <img id="verifyCodeImg" width="80" height="32"  style="display:none" onclick="refreshVerifyCode()"/>
+                    <input id="verifyCode"  class="form-control" style="display:none"/>
+                    <button class="btn btn-primary btn-block" type="button" id="buyButton" onclick="getKillPath()">立即秒杀</button>
+                </div>
+            </div>
+            <input type="hidden" name="goodsId" id="goodsId" />
+        </td>
+     </tr>
+     <tr>  
+        <td>商品原价</td>  
+        <td colspan="3" id="goodsPrice"></td>
+     </tr>
+      <tr>  
+        <td>秒杀价</td>  
+        <td colspan="3" id="killPrice"></td>
+     </tr>
+     <tr>  
+        <td>库存数量</td>  
+        <td colspan="3" id="stockCount"></td>
+     </tr>
+  </table>
+</div>
+</body>
+<script>
+    $(function(){
+        getDetails();
+    });
+
+    function getDetails() {
+        var goodsId = url_getQueryParam("goodsId");
+        $.ajax({
+           url:"/secondKill/goods/to_detail/"+goodsId,
+           type:"GET",
+           success:function (data) {
+               if (data.code = 200){
+                   //渲染页面
+                   rendering(data.data);
+               } else {
+                   layer.msg(data.msg);
+               }
+           },
+           error:function () {
+               layer.msg("请求异常，请重试!")
+           }
+        });
+    }
+
+    function rendering(data) {
+        var killStatus = data.killStatus;
+        var remainSeconds = data.remainSeconds;
+        var goods = data.goods;
+        var user = data.killuser;
+        if(user){
+            $("userTip").hide();
+        }
+        $("#goodsName").text(goods.goodsName);
+        $("#goodsImg").attr("src","/secondKill/"+goods.goodsImg);
+        $("#goodsImg").attr("alt",goods.goodsDetail);
+        $("#goodsImg").attr("title",goods.goodsDetail);
+        $("#remainSeconds").val(remainSeconds);
+        $("#goodsId").val(goods.id);
+        $("#goodsPrice").text(goods.goodsPrice);
+        $("#killPrice").text(goods.killPrice);
+        $("#stockCount").text(goods.stockCount);
+        countDown();
+    }
+
+    function countDown(){
+        var remainSeconds = $("#remainSeconds").val();
+        var timeout;
+        if(remainSeconds > 0){//秒杀还没开始，倒计时
+            $("#buyButton").attr("disabled", true);
+            timeout = setTimeout(function(){
+                var remainTime = remainSeconds - 1;
+                $("#miaoshaTip").text("倒计时:" +remainTime);
+                $("#remainSeconds").val(remainTime);
+                countDown();
+            },1000);
+        }else if(remainSeconds == 0){//秒杀进行中
+            $("#buyButton").attr("disabled", false);
+            if(timeout){
+                clearTimeout(timeout);
+            }
+            $("#miaoshaTip").html("秒杀进行中");
+            $("#verifyCodeImg").attr("src", "/secondKill/Verification/code?goodsId="+$("#goodsId").val());
+            $("#verifyCodeImg").show();
+            $("#verifyCode").show();
+        }else{//秒杀已经结束
+            $("#buyButton").attr("disabled", true);
+            $("#miaoshaTip").html("秒杀已经结束");
+            $("#verifyCodeImg").hide();
+            $("#verifyCode").hide();
+        }
+    }
+
+
+    function getKillPath(){
+        $.ajax({
+            url:"/secondKill/kill/path",
+            type:"GET",
+            data:{
+                goodsId : $("#goodsId").val(),
+                verifyCode: $("#verifyCode").val()
+            },
+            dataType:"json",
+            success:function (data) {
+                if (data.code == 200){
+                    doKill(data.data);
+                } else {
+                    layer.msg(data.msg);
+                    if(data.code == 305){
+                        window.location.href = "/secondKill/login/to_login";
+                    }
+                }
+            },
+            error:function (jqXHR) {
+                var data = eval("("+jqXHR.responseText+")");
+                console.log(data);
+                if(data.code == 305){
+                    layer.msg(data.msg);
+                    window.location.href = "/secondKill/login/to_login";
+                } else {
+                    layer.msg("秒杀异常，请重试!");
+                }
+            }
+        });
+    }
+
+
+    function doKill(path){
+        $.ajax({
+           url:"/secondKill/kill/"+path+"/do_kill",
+           type:"POST",
+           data:{
+               goodsId : $("#goodsId").val()
+           },
+           dataType:"json",
+           success:function (data) {
+              if (data.code == 352){
+                    layer.msg(data.msg);
+                    getKillResult($("#goodsId").val());
+                    //window.location.href = "/secondKill/order_detail.htm?orderId="+data.data.id;
+              } else {
+                  layer.msg(data.msg);
+              }
+           },
+           error:function () {
+
+               layer.msg("秒杀异常，请重试!");
+           }
+        });
+    }
+    
+    function getKillResult(goodsId) {
+        $.ajax({
+            url:"/secondKill/kill/result",
+            type:"GET",
+            data:{
+                goodsId : goodsId
+            },
+            dataType:"json",
+            success:function (data) {
+                if (data.code == 200){
+                    window.location.href = "/secondKill/order_detail.htm?orderId="+data.data;
+                } else if (data.code == 352){
+                    setTimeout(function () {
+                        getKillResult(goodsId);
+                    },50);
+                } else {
+                    layer.msg(data.msg);
+                }
+            },
+            error:function () {
+                layer.msg(data.msg);
+            }
+        });
+    }
+
+    function refreshVerifyCode(){
+        $("#verifyCodeImg").attr("src", "/secondKill/Verification/code?goodsId="+$("#goodsId").val()+"&timestamp="+new Date().getTime());
+    }
+</script>
+</html>
