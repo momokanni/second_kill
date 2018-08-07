@@ -11,6 +11,7 @@ import com.kill.redis.GoodsKey;
 import com.kill.redis.RedisServiceImpl;
 import com.kill.service.GoodsService;
 import com.kill.util.ResultUtil;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,7 @@ import java.util.Map;
  */
 @Slf4j
 @Controller
+@Api(tags ="商品控制器")
 @RequestMapping(value = "/goods")
 public class GoodsController {
 
@@ -60,6 +62,8 @@ public class GoodsController {
      * 优化后：
      * QPS：7993
      **/
+    @ApiOperation(value="商品列表")
+    @ApiImplicitParam(name = "user", value = "秒杀用户", required = true, dataType = "KillUser")
     @GetMapping(value = "/list",produces = "text/html")
     @ResponseBody
     public String list(HttpServletRequest request, HttpServletResponse response,Model model, KillUser user){
@@ -75,6 +79,16 @@ public class GoodsController {
         return list_html;
     }
 
+
+    @ApiOperation(value="商品详细")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID", required = true, dataType = "Long",paramType = "path"),
+            @ApiImplicitParam(name = "user", value = "秒杀用户", required = true, dataType = "KillUser")
+    })
+    @ApiResponses({
+            @ApiResponse(code=320,message = "商品不存在"),
+            @ApiResponse(code=323,message="商品详情异常")
+    })
     @GetMapping(value = "/to_detail/{goodsId}")
     @ResponseBody
     public ResultVO<GoodsDetailVO> detail(HttpServletRequest request, HttpServletResponse response,

@@ -51,7 +51,7 @@ public enum StatusCode {
     GOODS_NOT_EXISTS(320,"商品不存在"),
     GOODS_SELL_OUT(321,"该商品已售罄"),
     GOODS_NO_SECOND_KILLING(322,"该商品暂无秒杀活动"),
-    GOODS_DETAIL_ERROR(323,"商品详情查询异常"),
+    GOODS_DETAIL_ERROR(323,"商品详情异常"),
 
     /**
      * 秒杀状态 350 ~ 360

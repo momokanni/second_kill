@@ -9,6 +9,7 @@ import com.kill.redis.RedisServiceImpl;
 import com.kill.service.GoodsService;
 import com.kill.service.OrderService;
 import com.kill.util.ResultUtil;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @create 2018-08-01 21:17
  */
 @Slf4j
+@Api(tags ="订单控制器")
 @Controller
 @RequestMapping(value = "/order")
 public class OrderInfoController {
@@ -36,6 +38,12 @@ public class OrderInfoController {
     @Autowired
     GoodsService goodsService;
 
+
+    @ApiOperation(value="订单详情接口")
+    @ApiImplicitParam(name = "orderId", value = "订单ID", required = true, dataType = "Long")
+    @ApiResponses({
+            @ApiResponse(code=301,message = "秒杀用户不存在")
+    })
     @RequestMapping(value = "/detail")
     @ResponseBody
     public ResultVO<OrderInfo> detail(@RequestParam(value = "orderId") long orderId){

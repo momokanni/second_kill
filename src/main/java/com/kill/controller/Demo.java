@@ -8,6 +8,7 @@ import com.kill.redis.RedisServiceImpl;
 import com.kill.redis.KillUserKey;
 import com.kill.service.DemoService;
 import com.kill.util.ResultUtil;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,7 @@ import java.util.List;
  * @create 2018-07-02 10:34
  */
 @Controller
+@Api(tags ="demo控制器")
 @RequestMapping(value = "/demo")
 public class Demo {
 

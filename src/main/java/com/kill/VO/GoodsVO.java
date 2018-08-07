@@ -2,6 +2,7 @@ package com.kill.VO;
 
 import com.kill.entity.Goods;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 

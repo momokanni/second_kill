@@ -15,6 +15,7 @@ import com.kill.service.GoodsService;
 import com.kill.service.KillService;
 import com.kill.service.OrderService;
 import com.kill.util.ResultUtil;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ import java.util.List;
  * InitializingBean : 类初始化
  */
 @Slf4j
+@Api(tags ="秒杀控制器")
 @Controller
 @RequestMapping(value = "/kill")
 public class KillController implements InitializingBean {
@@ -85,6 +87,12 @@ public class KillController implements InitializingBean {
      * QPS: 3196/s  2143个用户
      * 并发: 5000 * 10
      **/
+    @ApiOperation(value="秒杀接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "user", value = "秒杀用户", required = true, dataType = "KillUser"),
+            @ApiImplicitParam(name = "path", value = "秒杀接口随机路径", required = true, dataType = "String",paramType = "path")
+    })
     @PostMapping(value = "/{path}/do_kill")
     @ResponseBody
     public ResultVO<OrderInfo> doKill(@RequestParam(value = "goodsId") long goodsId, KillUser user, Model model,
@@ -160,6 +168,12 @@ public class KillController implements InitializingBean {
      * @param model
      * @return
      */
+    @ApiOperation(value="秒杀结果")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "user", value = "秒杀用户", required = true, dataType = "KillUser")
+    })
+    @ApiResponses({@ApiResponse(code=301,message = "秒杀用户不存在")})
     @GetMapping(value = "/result")
     @ResponseBody
     public ResultVO<String> killResult(@RequestParam(value = "goodsId") long goodsId, KillUser user, Model model){
@@ -178,6 +192,16 @@ public class KillController implements InitializingBean {
      * creat_date: 2018/8/6
      * creat_time: 10:59
      **/
+    @ApiOperation(value="请求秒杀路径")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "goodsId", value = "商品ID", required = true, dataType = "Long"),
+            @ApiImplicitParam(name = "user", value = "秒杀用户", required = true, dataType = "KillUser"),
+            @ApiImplicitParam(name = "verifyCode", value = "验证码计算结果", required = true, dataType = "Integer")
+    })
+    @ApiResponses({
+            @ApiResponse(code=301,message = "秒杀用户不存在"),
+            @ApiResponse(code=371,message="数学是体育老师教的吗？")
+    })
     @AccessLimit(seconds = 5,maxCount = 5)
     @GetMapping(value = "/path")
     @ResponseBody
