@@ -16,15 +16,15 @@
     <!-- SMTP server的端口地址。默认值：25 -->
     <property name="smtpPort" value="25"/>
     <!-- 发送邮件账号，默认为null -->
-    <property name="username" value="txhz2018@163.com"/>
+    <property name="username" value="XXXX"/>
     <!-- 发送邮件密码，默认为null -->
-    <property name="password" value="txhl1107clf"/>
+    <property name="password" value="XXXX"/>
     <!-- 如果设置为true，appender将会使用SSL连接到日志服务器。默认值：false -->
     <property name="SSL" value="false"/>
     <!-- 指定发送到那个邮箱，可设置多个<to>属性，指定多个目的邮箱 -->
-    <property name="email_to" value="740949744@qq.com"/><!--收件人账号多个可以逗号隔开-->
+    <property name="email_to" value="XXXX"/><!--收件人账号多个可以逗号隔开-->
     <!-- 指定发件人名称。如果设置成“&lt;ADMIN&gt; ”，则邮件发件人将会是“<ADMIN> ” -->
-    <property name="email_from" value="txhz2018@163.com" />
+    <property name="email_from" value="XXXX" />
     <!-- 指定emial的标题，它需要满足PatternLayout中的格式要求。如果设置成“Log: %logger - %msg ”，就案例来讲，则发送邮件时，标题为“【Error】: com.foo.Bar - Hello World ”。 默认值："%logger{20} - %m". -->
     <property name="email_subject" value="[@activatedProfile@][as-server] is error" />
 
