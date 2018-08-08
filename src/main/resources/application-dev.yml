@@ -9,8 +9,8 @@ spring:
     suffix: .html
   mail:
     host: smtp.163.com
-    username: txhz2018@163.com
-    password: txhl1107clf
+    username: XXXXX
+    password: XXXXX
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.jdbc.Driver
@@ -38,13 +38,13 @@ spring:
         allow: 127.0.0.1
         url-pattern: /druid/*
       username: root
-      password: txhl1107mysql
-      url: jdbc:mysql://m.limit-tech.com:3306/kill?useUnicode=true&characterEncoding=UTF-8
+      password: XXXXX
+      url: jdbc:mysql://XXXXXX:3306/kill?useUnicode=true&characterEncoding=UTF-8
   rabbitmq:
-    host: 123.56.207.181
+    host: XXXXXXXX
     port: 5672
-    username: rabbitmq
-    password: txhl1107
+    username: XXXXXX
+    password: XXXXXX
     virtual-host: /
     listener:
       simple:
@@ -70,9 +70,9 @@ spring:
         multiplier: 1.0
 
 redis:
-  host: 123.56.207.181
+  host: XXXXXXX
   port: 6379
-  password: txhl1107_redis_cs
+  password: XXXXXX
   max-active: 1000
   #最大空闲
   max-idle: 1000
